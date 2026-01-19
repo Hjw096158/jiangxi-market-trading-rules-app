@@ -25,11 +25,13 @@ jobs:
 
       - name: Install dependencies
         run: |
-          npm install --force
+          npm ci  # 使用 ci 而不是 install，确保与 lockfile 一致
           npx vite --version  # 测试 vite 是否可用
 
       - name: Build project
-        run: npm run build
+        run: |
+          npx tsc
+          npx vite build
 
       - name: Setup Pages
         uses: actions/configure-pages@v3
