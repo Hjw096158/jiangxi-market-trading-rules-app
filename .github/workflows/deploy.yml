@@ -1,0 +1,50 @@
+# 简单的 GitHub Pages 部署工作流
+name: Deploy to GitHub Pages
+
+on:
+  # 触发条件：当代码推送到 "main" 分支时
+  push:
+    branches: [ "main" ]
+  # 允许您在 Actions 页面手动触发此工作流
+  workflow_dispatch:
+
+# 设置 GITHUB_TOKEN 的权限，以便部署到 GitHub Pages
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+jobs:
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout 代码
+        uses: actions/checkout@v4
+
+      - name: 设置 Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      - name: 安装依赖
+        run: npm install
+
+      - name: 构建项目
+        run: npm run build
+
+      - name: 设置 Pages
+        uses: actions/configure-pages@v4
+
+      - name: 上传构建产物
+        uses: actions/upload-pages-artifact@v3
+        with:
+          # 上传 dist 文件夹的内容
+          path: './dist'
+
+      - name: 部署到 GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
