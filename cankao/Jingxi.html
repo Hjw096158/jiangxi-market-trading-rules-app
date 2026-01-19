@@ -1,0 +1,1642 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>江西电力市场规则闯关系统</title>
+    <style>
+        :root {
+            --bg-gradient: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #312e81 100%);
+            --card-bg: rgba(255, 255, 255, 0.08);
+            --card-border: rgba(255, 255, 255, 0.1);
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --accent-color: #38bdf8;
+            --success-color: #4ade80;
+            --error-color: #f87171;
+            --warning-color: #fbbf24;
+            --locked-color: #475569;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: var(--bg-gradient);
+            color: var(--text-primary);
+            min-height: 100vh;
+            overflow-x: hidden;
+            line-height: 1.5;
+        }
+
+        /* --- Layout --- */
+        .app-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* --- Header --- */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 20px;
+            background: rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            margin-bottom: 30px;
+            border: 1px solid var(--card-border);
+        }
+
+        .user-stats {
+            display: flex;
+            gap: 20px;
+            font-weight: 600;
+        }
+
+        .stat-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* --- Navigation/Pages --- */
+        .page {
+            display: none;
+            animation: fadeIn 0.4s ease-out;
+            flex: 1;
+        }
+
+        .page.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* --- Map View --- */
+        .map-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            padding-bottom: 40px;
+        }
+
+        .level-card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 16px;
+            padding: 25px;
+            position: relative;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            overflow: hidden;
+        }
+
+        .level-card.locked {
+            opacity: 0.6;
+            cursor: not-allowed;
+            filter: grayscale(0.8);
+        }
+
+        .level-card:not(.locked):hover {
+            transform: translateY(-5px);
+            background: rgba(255, 255, 255, 0.12);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+            border-color: var(--accent-color);
+        }
+
+        .level-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+        }
+
+        .level-num {
+            font-size: 0.9em;
+            color: var(--accent-color);
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .level-title {
+            font-size: 1.25em;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .level-info {
+            display: flex;
+            gap: 15px;
+            font-size: 0.85em;
+            color: var(--text-secondary);
+            margin-bottom: 15px;
+        }
+
+        .progress-bar-bg {
+            height: 6px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            background: var(--success-color);
+            width: 0%;
+            transition: width 0.5s ease;
+        }
+
+        /* --- Sub-Level Navigation --- */
+        .sub-level-nav {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 25px;
+            background: rgba(0,0,0,0.2);
+            padding: 10px;
+            border-radius: 12px;
+            overflow-x: auto;
+        }
+
+        .sub-level-btn {
+            background: transparent;
+            border: 1px solid transparent;
+            color: var(--text-secondary);
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: all 0.2s;
+            font-weight: 600;
+        }
+
+        .sub-level-btn:hover {
+            background: rgba(255,255,255,0.05);
+        }
+
+        .sub-level-btn.active {
+            background: var(--accent-color);
+            color: #fff;
+            box-shadow: 0 4px 12px rgba(56, 189, 248, 0.3);
+        }
+
+        /* --- Learning Section --- */
+        .section-nav {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            overflow-x: auto;
+            padding-bottom: 5px;
+        }
+
+        .nav-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            color: var(--text-secondary);
+            padding: 10px 20px;
+            border-radius: 20px;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: all 0.2s;
+        }
+
+        .nav-btn.active {
+            background: var(--accent-color);
+            color: #fff;
+            font-weight: bold;
+        }
+
+        /* Knowledge Cards */
+        .knowledge-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .info-card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 20px;
+            border: 1px solid var(--card-border);
+        }
+
+        .info-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+            cursor: pointer;
+        }
+
+        .info-icon {
+            font-size: 1.5em;
+            background: rgba(255, 255, 255, 0.1);
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+        }
+
+        .info-title {
+            font-weight: bold;
+            font-size: 1.1em;
+            flex: 1;
+        }
+
+        .info-details {
+            font-size: 0.9em;
+            color: var(--text-secondary);
+            line-height: 1.6;
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        /* Quiz Section */
+        .quiz-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: var(--card-bg);
+            padding: 30px;
+            border-radius: 16px;
+            border: 1px solid var(--card-border);
+        }
+
+        .question-card {
+            margin-bottom: 20px;
+            animation: fadeIn 0.3s;
+        }
+
+        .question-text {
+            font-size: 1.2em;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+
+        .options-grid {
+            display: grid;
+            gap: 12px;
+        }
+
+        /* Quiz Option Styles */
+        .option-btn {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--card-border);
+            padding: 15px;
+            border-radius: 10px;
+            color: var(--text-primary);
+            text-align: left;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .option-btn:hover:not(.disabled) {
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        .option-btn.selected {
+            border-color: var(--accent-color);
+            background: rgba(56, 189, 248, 0.1);
+        }
+
+        .option-btn.correct {
+            background: rgba(74, 222, 128, 0.2);
+            border-color: var(--success-color);
+            color: var(--success-color);
+        }
+
+        .option-btn.wrong {
+            background: rgba(248, 113, 113, 0.2);
+            border-color: var(--error-color);
+            color: var(--error-color);
+        }
+
+        /* True/False Switch */
+        .tf-container {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            margin: 30px 0;
+        }
+        
+        .tf-btn {
+            padding: 15px 40px;
+            border-radius: 30px;
+            font-weight: bold;
+            font-size: 1.2em;
+            cursor: pointer;
+            border: 2px solid rgba(255,255,255,0.2);
+            background: rgba(255,255,255,0.05);
+            color: var(--text-secondary);
+            transition: all 0.3s;
+        }
+
+        .tf-btn.active-true { background: var(--success-color); color: #000; border-color: var(--success-color); }
+        .tf-btn.active-false { background: var(--error-color); color: #fff; border-color: var(--error-color); }
+
+        /* Case Study */
+        .case-content {
+            background: rgba(0,0,0,0.2);
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border-left: 4px solid var(--warning-color);
+            font-size: 0.95em;
+            line-height: 1.6;
+        }
+
+        .explanation {
+            margin-top: 20px;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            font-size: 0.9em;
+            display: none;
+            border-left: 4px solid var(--accent-color);
+        }
+
+        .explanation.show {
+            display: block;
+            animation: fadeIn 0.3s;
+        }
+
+        /* Simulator Game */
+        .game-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            background: rgba(0,0,0,0.2);
+            padding: 10px 20px;
+            border-radius: 12px;
+        }
+
+        .game-area {
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            gap: 20px;
+            height: 600px;
+        }
+
+        .card-pool {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 12px;
+            padding: 15px;
+            overflow-y: auto;
+            border: 1px solid var(--card-border);
+            position: relative;
+        }
+
+        .game-card {
+            background: #fff;
+            color: #1e293b;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            cursor: grab;
+            transition: all 0.2s;
+            border-left: 4px solid var(--accent-color);
+            font-size: 0.9em;
+            position: relative;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+
+        .game-card:active {
+            cursor: grabbing;
+            transform: scale(1.02);
+        }
+
+        .game-card.dragging {
+            opacity: 0.5;
+        }
+
+        .drop-zones {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            grid-template-rows: repeat(3, 1fr);
+            gap: 15px;
+        }
+
+        .drop-zone {
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px dashed rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+            position: relative;
+        }
+
+        .drop-zone.drag-over {
+            background: rgba(255, 255, 255, 0.15);
+            border-color: var(--accent-color);
+            transform: scale(1.02);
+        }
+
+        .drop-zone.correct-flash {
+            animation: flashGreen 0.5s;
+        }
+
+        .drop-zone.wrong-flash {
+            animation: flashRed 0.5s;
+        }
+
+        @keyframes flashGreen {
+            0% { background: rgba(74, 222, 128, 0.5); }
+            100% { background: rgba(255, 255, 255, 0.05); }
+        }
+
+        @keyframes flashRed {
+            0% { background: rgba(248, 113, 113, 0.5); }
+            100% { background: rgba(255, 255, 255, 0.05); }
+        }
+
+        .zone-icon {
+            font-size: 2em;
+            margin-bottom: 5px;
+        }
+
+        .zone-label {
+            font-weight: bold;
+        }
+
+        /* Timeline Game Styles */
+        .timeline-container {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        .timeline-slot {
+            background: rgba(255,255,255,0.05);
+            border: 2px dashed rgba(255,255,255,0.2);
+            padding: 15px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        .timeline-slot.filled {
+            border-style: solid;
+            background: rgba(255,255,255,0.1);
+        }
+        .timeline-index {
+            font-weight: bold;
+            color: var(--accent-color);
+            width: 30px;
+        }
+        .timeline-item {
+            background: var(--accent-color);
+            color: #000;
+            padding: 8px 15px;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: grab;
+            flex: 1;
+        }
+
+        /* Matching Game Styles */
+        .match-game-container {
+            display: grid;
+            grid-template-columns: 1fr 100px 1fr;
+            gap: 20px;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        .match-col {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        .match-btn {
+            background: rgba(255,255,255,0.1);
+            border: 2px solid transparent;
+            padding: 15px;
+            border-radius: 8px;
+            color: white;
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.2s;
+        }
+        .match-btn:hover { background: rgba(255,255,255,0.2); }
+        .match-btn.selected { border-color: var(--accent-color); background: rgba(56, 189, 248, 0.2); }
+        .match-btn.matched { border-color: var(--success-color); background: rgba(74, 222, 128, 0.2); opacity: 0.6; cursor: default; }
+        .match-btn.wrong { animation: shake 0.4s; border-color: var(--error-color); }
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+
+        /* Particle Effect */
+        .particle {
+            position: absolute;
+            pointer-events: none;
+            animation: particleFly 1s ease-out forwards;
+            font-size: 1.2em;
+        }
+
+        @keyframes particleFly {
+            0% { transform: translate(0, 0) scale(1); opacity: 1; }
+            100% { transform: translate(var(--tx), var(--ty)) scale(0); opacity: 0; }
+        }
+
+        /* Result Page */
+        .result-container {
+            text-align: center;
+            max-width: 600px;
+            margin: 50px auto;
+            background: var(--card-bg);
+            padding: 40px;
+            border-radius: 20px;
+            border: 1px solid var(--card-border);
+        }
+
+        .stars {
+            font-size: 3em;
+            margin: 20px 0;
+            letter-spacing: 10px;
+        }
+
+        .star.active { color: var(--warning-color); text-shadow: 0 0 20px var(--warning-color); }
+        .star.inactive { color: #475569; }
+
+        .score-display {
+            font-size: 2.5em;
+            font-weight: bold;
+            color: var(--accent-color);
+            margin-bottom: 10px;
+        }
+
+        .action-btn {
+            background: var(--accent-color);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 25px;
+            font-size: 1.1em;
+            cursor: pointer;
+            margin: 10px;
+            transition: all 0.2s;
+            font-weight: bold;
+        }
+
+        .action-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 20px rgba(56, 189, 248, 0.4);
+        }
+
+        .secondary-btn {
+            background: transparent;
+            border: 2px solid rgba(255,255,255,0.2);
+        }
+
+        .secondary-btn:hover {
+            background: rgba(255,255,255,0.1);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .game-area {
+                grid-template-columns: 1fr;
+                grid-template-rows: 150px 1fr;
+                height: auto;
+            }
+            .card-pool {
+                display: flex;
+                overflow-x: auto;
+                white-space: nowrap;
+                padding-bottom: 10px;
+            }
+            .game-card {
+                display: inline-block;
+                width: 160px;
+                margin-right: 10px;
+                white-space: normal;
+                vertical-align: top;
+            }
+            .drop-zones {
+                grid-template-columns: 1fr;
+            }
+            .match-game-container {
+                grid-template-columns: 1fr;
+                gap: 10px;
+            }
+        }
+        
+        /* Utility */
+        .hidden { display: none !important; }
+        .text-green { color: var(--success-color); }
+        .text-red { color: var(--error-color); }
+        .combo-text {
+            color: var(--warning-color);
+            font-weight: bold;
+            font-size: 1.2em;
+            animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        @keyframes popIn {
+            from { transform: scale(0); }
+            to { transform: scale(1); }
+        }
+    </style>
+</head>
+<body>
+
+<div class="app-container">
+    <!-- Header -->
+    <header>
+        <div class="logo">
+            <span style="font-size: 1.5em; font-weight: bold;">⚡ 江西电力市场</span>
+            <span style="font-size: 0.8em; color: var(--text-secondary); margin-left: 10px;">学习闯关系统 MVP</span>
+        </div>
+        <div class="user-stats">
+            <div class="stat-item">
+                <span class="stat-icon">⭐</span>
+                <span id="total-score">0</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-icon">🔓</span>
+                <span id="levels-unlocked">1/7</span>
+            </div>
+        </div>
+    </header>
+
+    <div id="pages">
+        <!-- 1. Map Page -->
+        <div id="page-map" class="page active">
+            <h2 style="margin-bottom: 20px;">关卡地图</h2>
+            <div class="map-grid" id="level-grid">
+                <!-- Levels will be injected by JS -->
+            </div>
+            <div style="margin-top: 30px; padding: 20px; background: rgba(0,0,0,0.2); border-radius: 12px;">
+                <div style="display:flex; justify-content:space-between; margin-bottom:10px;">
+                    <span>总体学习进度</span>
+                    <span id="overall-progress-text">0%</span>
+                </div>
+                <div class="progress-bar-bg">
+                    <div class="progress-bar-fill" id="overall-progress-bar" style="width: 0%"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 2. Level Detail Page -->
+        <div id="page-level" class="page">
+            <div style="display:flex; align-items:center; margin-bottom:20px;">
+                <button onclick="router.go('map')" style="background:none; border:none; color:white; font-size:1.5em; cursor:pointer; margin-right:15px;">←</button>
+                <div>
+                    <h2 id="current-level-title">第1关：市场准入篇</h2>
+                    <p style="color:var(--text-secondary); font-size:0.9em;" id="current-level-subtitle">经营主体与注册流程</p>
+                </div>
+            </div>
+
+            <!-- Sub-Level Navigation -->
+            <div class="sub-level-nav" id="sub-level-nav">
+                <!-- Injected via JS -->
+            </div>
+
+            <div class="section-nav">
+                <button class="nav-btn active" onclick="levelManager.switchTab('learn')">📖 知识学习</button>
+                <button class="nav-btn" onclick="levelManager.switchTab('quiz')">✍️ 题目挑战</button>
+                <button class="nav-btn" id="btn-tab-game" onclick="levelManager.switchTab('game')">🎮 模拟实战</button>
+            </div>
+
+            <!-- Tab: Learn -->
+            <div id="tab-learn" class="tab-content">
+                <div class="knowledge-container" id="knowledge-content">
+                    <!-- Content injected by JS -->
+                </div>
+                <div style="text-align:center; margin-top:30px;">
+                    <button class="action-btn" onclick="levelManager.switchTab('quiz')">开始答题挑战 →</button>
+                </div>
+            </div>
+
+            <!-- Tab: Quiz -->
+            <div id="tab-quiz" class="tab-content hidden">
+                <div class="quiz-container">
+                    <div style="display:flex; justify-content:space-between; margin-bottom:20px; color:var(--text-secondary);">
+                        <span>进度: <span id="quiz-progress">1/5</span></span>
+                        <span>得分: <span id="quiz-score">0</span></span>
+                    </div>
+                    <div id="quiz-area">
+                        <!-- Question injected by JS -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab: Game -->
+            <div id="tab-game" class="tab-content hidden">
+                <div class="game-header">
+                    <div>
+                        <h3 id="game-title">主体身份识别器</h3>
+                        <small style="color:var(--text-secondary)" id="game-instruction">拖拽卡片到正确的类型框</small>
+                    </div>
+                    <div style="text-align:right">
+                        <div style="font-size:1.2em; font-weight:bold;">
+                            得分: <span id="game-score" class="text-green">0</span>
+                            <span id="combo-display" class="combo-text hidden">COMBO x2!</span>
+                        </div>
+                        <div>⏱️ <span id="game-timer">60</span>s | 剩余: <span id="game-remaining">0</span></div>
+                    </div>
+                </div>
+                
+                <div id="game-start-overlay" style="text-align:center; padding:50px; background:var(--card-bg); border-radius:12px;">
+                    <h3 id="game-start-title">准备好了吗？</h3>
+                    <p style="margin:20px 0; color:var(--text-secondary)" id="game-start-desc">需要在60秒内完成挑战。</p>
+                    <button class="action-btn" onclick="simulator.start()">开始挑战</button>
+                </div>
+
+                <!-- Game Type 1: Drag & Drop (1-1) -->
+                <div id="game-area-drag" class="game-area hidden">
+                    <div class="card-pool" id="game-pool">
+                        <!-- Draggable cards -->
+                    </div>
+                    <div class="drop-zones" id="game-zones">
+                        <!-- Drop zones -->
+                    </div>
+                </div>
+
+                <!-- Game Type 2: Timeline Sort (1-3) -->
+                <div id="game-area-timeline" class="hidden">
+                    <div class="timeline-container" id="timeline-slots">
+                        <!-- Slots injected by JS -->
+                    </div>
+                    <div style="margin-top:20px; text-align:center;">
+                        <div id="timeline-pool" style="display:flex; gap:10px; justify-content:center; flex-wrap:wrap; margin-bottom:20px;">
+                            <!-- Draggable items -->
+                        </div>
+                        <button class="action-btn" onclick="simulator.checkTimeline()">提交排序</button>
+                    </div>
+                </div>
+
+                <!-- Game Type 3: Matching (1-4) -->
+                <div id="game-area-match" class="hidden">
+                    <div class="match-game-container">
+                        <div class="match-col" id="match-left"></div>
+                        <div style="display:flex; align-items:center; justify-content:center; color:var(--text-secondary);">↔️</div>
+                        <div class="match-col" id="match-right"></div>
+                    </div>
+                </div>
+
+                <!-- Game Type 4: Boss Challenge (1-5) -->
+                <div id="game-area-boss" class="hidden">
+                    <div class="quiz-container">
+                        <div id="boss-quiz-area"></div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- 3. Result Page -->
+        <div id="page-result" class="page">
+            <div class="result-container">
+                <h2 id="result-title">🎉 关卡完成！</h2>
+                <div class="stars" id="result-stars">
+                    <span class="star">★</span><span class="star">★</span><span class="star">★</span>
+                </div>
+                <div class="score-display" id="result-score">95</div>
+                <p style="color:var(--text-secondary); margin-bottom:30px;" id="result-msg">太棒了！你已经掌握了核心知识。</p>
+                
+                <div id="badges" style="display:flex; justify-content:center; gap:15px; margin-bottom:30px;">
+                    <!-- Badges injected -->
+                </div>
+
+                <div>
+                    <button class="action-btn" onclick="router.go('map')">返回地图</button>
+                    <button class="action-btn secondary-btn" onclick="levelManager.resetLevel()">重新挑战</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // --- Data ---
+    const LEVELS = [
+        { id: 1, title: "市场准入篇", subtitle: "经营主体与注册流程", stars: 0, locked: false, progress: 0 },
+        { id: 2, title: "中长期基础", subtitle: "交易品种与合同要素", stars: 0, locked: true, progress: 0 },
+        { id: 3, title: "交易方式篇", subtitle: "双边、竞价与撮合", stars: 0, locked: true, progress: 0 },
+        { id: 4, title: "价格与电量", subtitle: "48时段与约束计算", stars: 0, locked: true, progress: 0 },
+        { id: 5, title: "绿色电力", subtitle: "绿电交易与绿证", stars: 0, locked: true, progress: 0 },
+        { id: 6, title: "结算体系", subtitle: "电费结算与偏差", stars: 0, locked: true, progress: 0 },
+        { id: 7, title: "综合实战", subtitle: "全流程模拟交易", stars: 0, locked: true, progress: 0 }
+    ];
+
+    const SUB_LEVELS = {
+        1: [
+            { id: '1-1', title: '1-1 经营主体类型识别', hasSimulator: true, gameType: 'drag' },
+            { id: '1-2', title: '1-2 注册条件判断', hasSimulator: false },
+            { id: '1-3', title: '1-3 交易品种认知', hasSimulator: true, gameType: 'timeline' },
+            { id: '1-4', title: '1-4 市场结构解析', hasSimulator: true, gameType: 'match' },
+            { id: '1-5', title: '1-5 基础概念综合', hasSimulator: true, gameType: 'boss' }
+        ]
+    };
+
+    const KNOWLEDGE_DB = {
+        '1-1': [
+            { title: "发电企业", icon: "🏭", desc: "拥有发电厂，取得电力业务许可证，单机容量6MW及以上。包括燃煤、燃气、水电、新能源等。" },
+            { title: "售电公司", icon: "🏢", desc: "资产总额不低于2000万元，具备信息系统，不拥有电网资产，负责代理用户购电。" },
+            { title: "电力用户", icon: "🏭", desc: "经营性用户。批发用户需接入110kV及以上且年用电量5000万kWh以上；其他为零售用户。" },
+            { title: "新型储能", icon: "🔋", desc: "独立计量、独立控制，可独立参与电力市场交易的电化学储能、压缩空气储能等。" },
+            { title: "虚拟电厂", icon: "🌐", desc: "聚合分布式电源、可控负荷、储能等资源，作为一个整体参与电网调度和市场交易。" }
+        ],
+        '1-2': [
+            { title: "发电企业准入", icon: "⚡", desc: "依法取得核准/备案文件；取得电力业务许可证；单机容量6MW及以上；签订并网调度协议。" },
+            { title: "售电公司准入", icon: "💼", desc: "资产总额≥2000万元；有固定场所和专职人员；具备信息系统和客户服务能力；无不良信用记录。" },
+            { title: "电力用户准入", icon: "🏭", desc: "工商业用户原则上全部参与市场；批发用户需110kV及以上；经营性用户需符合产业政策。" },
+            { title: "注册流程", icon: "📝", desc: "申请 → 承诺 → 审查(5个工作日) → 公示(售电公司10个工作日) → 生效。" }
+        ],
+        '1-3': [
+            { title: "交易品种", icon: "📊", desc: "包括电能量交易（直接交易）、合同交易（转让/回购）、绿色电力交易（电能量+环境价值）。" },
+            { title: "年度交易", icon: "📅", desc: "通常在每年12月开展，主要采用双边协商方式，确定下一年度的基础电量和价格。" },
+            { title: "月度交易", icon: "🗓️", desc: "包括月度双边、集中竞价、挂牌等方式，对年度合同进行补充和调整。" },
+            { title: "D-2日交易", icon: "⏳", desc: "在运行日前2天进行的融合交易，连接中长期与现货市场。" }
+        ],
+        '1-4': [
+            { title: "电网企业", icon: "🔌", desc: "负责输配电服务、电网安全运行、代收电费，不参与市场竞争，提供保底和代理购电服务。" },
+            { title: "交易机构", icon: "🏛️", desc: "负责市场注册、组织交易、出具结算依据、信息披露，是市场的组织者。" },
+            { title: "调度机构", icon: "📡", desc: "负责安全校核、实时调度、辅助服务管理，保障电网实时平衡。" },
+            { title: "权责边界", icon: "⚖️", desc: "发电侧负责生产，用户侧负责消费，售电侧负责服务，电网侧负责输送，交易/调度负责运营。" }
+        ],
+        '1-5': [
+            { title: "第1章总复习", icon: "📚", desc: "回顾市场主体准入条件、注册流程、交易品种及周期、各方权利义务。准备好迎接综合挑战了吗？" }
+        ]
+    };
+
+    const QUIZ_DB = {
+        '1-1': [
+            { type: 'sc', q: "江西电力市场中，下列哪项不属于市场经营主体？", options: ["发电企业", "售电公司", "电网企业", "电力用户"], answer: 2, explanation: "电网企业主要负责输配电服务，不参与市场竞争。" },
+            { type: 'sc', q: "批发用户参与市场的电压等级要求原则上为？", options: ["10kV及以上", "35kV及以上", "110kV及以上", "220kV及以上"], answer: 2, explanation: "批发用户原则上需接入电压等级110kV及以上。" },
+            { type: 'sc', q: "售电公司注册时的资产总额不得低于多少人民币？", options: ["500万元", "1000万元", "2000万元", "5000万元"], answer: 2, explanation: "售电公司资产总额不得低于2000万元人民币。" },
+            { type: 'sc', q: "发电企业参与市场的单台机组容量门槛是？", options: ["1MW及以上", "6MW及以上", "10MW及以上", "30MW及以上"], answer: 1, explanation: "发电企业单台机组容量需达到6MW及以上。" },
+            { type: 'sc', q: "下列哪项属于“新型经营主体”？", options: ["燃煤电厂", "虚拟电厂", "居民用户", "电网公司"], answer: 1, explanation: "新型经营主体包括新型储能、虚拟电厂等。" }
+        ],
+        '1-2': [
+            { type: 'tf', q: "发电企业的单台机组容量必须达到6兆瓦及以上才能参与市场。", answer: true, explanation: "规则第六条规定，发电企业单台机组容量需6MW及以上。" },
+            { type: 'tf', q: "售电公司注册后需要进行10个工作日的公示期。", answer: true, explanation: "售电公司需公示10个工作日，其他主体免公示。" },
+            { type: 'tf', q: "电网企业可以作为售电主体参与市场竞争。", answer: false, explanation: "电网企业不参与市场竞争，仅提供保底和代理购电。" },
+            { type: 'mc', q: "售电公司注册需要满足哪些条件？", options: ["资产≥2000万", "有专职人员", "有信息系统", "拥有配电网"], answer: [0, 1, 2], explanation: "售电公司不拥有电网资产。" },
+            { type: 'case', q: "某公司资产1800万元，申请注册售电公司。", subQ: "该公司是否符合准入条件？", options: ["符合", "不符合"], answer: 1, explanation: "资产必须≥2000万元，1800万元不达标。" }
+        ],
+        '1-3': [
+            { type: 'sc', q: "中长期市场的主要交易品种不包括？", options: ["电力直接交易", "发电权交易", "合同电量转让", "实时平衡交易"], answer: 3, explanation: "实时平衡交易属于现货市场范畴。" },
+            { type: 'sc', q: "年度双边协商交易通常在每年什么时候开展？", options: ["1月", "6月", "10月", "12月"], answer: 3, explanation: "年度交易通常在上一年度12月份组织开展。" },
+            { type: 'mc', q: "以下哪些属于月度及以内的中长期交易方式？", options: ["双边协商", "集中竞价", "挂牌", "滚动撮合"], answer: [0, 1, 2, 3], explanation: "月度及以内包括双边、竞价、挂牌和滚动撮合四种方式。" },
+            { type: 'tf', q: "48时段是指将一天24小时划分为48个半小时的交易时段。", answer: true, explanation: "中长期市场以48时段为交易标的物。" },
+            { type: 'sc', q: "月内滚动撮合交易的主要原则是？", options: ["价格优先", "时间优先", "时间优先、价格优先", "随机撮合"], answer: 2, explanation: "滚动撮合交易按“时间优先、价格优先”原则进行。" }
+        ],
+        '1-4': [
+            { type: 'sc', q: "在江西电力市场中，负责组织市场交易的机构是？", options: ["能源局", "电网企业", "电力交易机构", "调度机构"], answer: 2, explanation: "电力交易机构负责组织开展市场交易。" },
+            { type: 'mc', q: "电力交易机构的主要职责包括？", options: ["组织交易", "运行平台", "出具结算依据", "收取电费"], answer: [0, 1, 2], explanation: "收取电费是电网企业的职责。" },
+            { type: 'tf', q: "电网企业在电力市场中既负责输配电服务，也可以作为经营主体参与市场交易。", answer: false, explanation: "电网企业不参与市场竞争，仅提供保底和代理购电。" },
+            { type: 'sc', q: "电力调度机构在市场运营中的主要职责是？", options: ["制定规则", "组织出清", "安全校核", "监督市场"], answer: 2, explanation: "调度机构负责安全校核和实时调度。" },
+            { type: 'mc', q: "以下关于市场运营机构的描述，正确的是？", options: ["交易机构组织交易", "电网企业负责结算", "调度机构负责安全", "监管部门制定规则"], answer: [0, 1, 2], explanation: "市场规则由政府部门会同监管部门制定。" }
+        ],
+        '1-5': [
+            // Boss level uses a mix, populated dynamically or predefined
+        ]
+    };
+
+    // Populate Boss Level (Mix of previous questions)
+    const allQuestions = [...QUIZ_DB['1-1'], ...QUIZ_DB['1-2'], ...QUIZ_DB['1-3'], ...QUIZ_DB['1-4']];
+    QUIZ_DB['1-5'] = allQuestions.sort(() => 0.5 - Math.random()).slice(0, 15);
+
+    // --- Game Data ---
+    const GAME_DATA = {
+        '1-1': {
+            title: "主体身份识别器",
+            instruction: "拖拽卡片到正确的类型框",
+            desc: "需要在60秒内完成10个主体的分类匹配。",
+            zones: [
+                { id: "generator", label: "发电企业", icon: "🏭" },
+                { id: "retailer", label: "售电公司", icon: "🏢" },
+                { id: "user", label: "电力用户", icon: "🏭" },
+                { id: "storage", label: "新型储能", icon: "🔋" },
+                { id: "vpp", label: "虚拟电厂", icon: "🌐" }
+            ],
+            items: [
+                { id: 1, name: "华能井冈山电厂", desc: "300MW燃煤机组", type: "generator" },
+                { id: 2, name: "赣江新区售电公司", desc: "注册资本2000万", type: "retailer" },
+                { id: 3, name: "南昌某钢铁集团", desc: "110kV专线供电", type: "user" },
+                { id: 4, name: "宜春锂电储能站", desc: "独立计量接入", type: "storage" },
+                { id: 5, name: "某负荷聚合商", desc: "聚合500个充电桩", type: "vpp" },
+                { id: 6, name: "江西某风电场", desc: "装机容量50MW", type: "generator" },
+                { id: 7, name: "九江某水泥厂", desc: "年用电8000万kWh", type: "user" },
+                { id: 8, name: "某能源服务公司", desc: "代理100家中小用户", type: "retailer" },
+                { id: 9, name: "某楼宇空调聚合", desc: "具备调节能力", type: "vpp" },
+                { id: 10, name: "磷酸铁锂电池站", desc: "参与调峰辅助服务", type: "storage" }
+            ]
+        },
+        '1-3': {
+            title: "交易时间轴排序",
+            instruction: "将交易类型按正确的时间顺序排列",
+            desc: "拖拽下方卡片到上方的时间轴插槽中。",
+            correctOrder: ["annual", "monthly", "intra", "d2", "spot", "realtime"],
+            items: [
+                { id: "monthly", label: "月度交易" },
+                { id: "spot", label: "现货交易(D-1)" },
+                { id: "annual", label: "年度交易" },
+                { id: "realtime", label: "实时运行(D)" },
+                { id: "d2", label: "D-2日融合" },
+                { id: "intra", label: "月内交易" }
+            ]
+        },
+        '1-4': {
+            title: "市场角色连线",
+            instruction: "点击左侧职责，再点击右侧对应主体进行匹配",
+            desc: "将市场职责与责任主体正确对应。",
+            pairs: [
+                { left: "输配电服务", right: "电网企业" },
+                { left: "组织市场交易", right: "交易机构" },
+                { left: "电网安全校核", right: "调度机构" },
+                { left: "生产绿色电力", right: "发电企业" },
+                { left: "代理用户购电", right: "售电公司" }
+            ]
+        },
+        '1-5': {
+            title: "第1章 BOSS挑战",
+            instruction: "限时15分钟，完成15道综合测试题",
+            desc: "这是最终考验！答对12题以上才能通关。",
+            timeLimit: 900 // 15 mins
+        }
+    };
+
+    // --- State Management ---
+    const state = {
+        totalScore: 0,
+        currentLevelIdx: 0,
+        currentSubLevelId: '1-1',
+        quiz: {
+            currentIdx: 0,
+            score: 0,
+            answers: [],
+            completed: false
+        },
+        game: {
+            active: false,
+            score: 0,
+            completedCount: 0,
+            timer: 60,
+            combo: 0,
+            timerInterval: null,
+            timelineSlots: [],
+            matchSelection: { left: null, right: null },
+            bossAnswers: []
+        }
+    };
+
+    // --- Router ---
+    const router = {
+        go: (pageId) => {
+            // 移除所有页面的active类
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            // 激活目标页面
+            const targetPage = document.getElementById(`page-${pageId}`);
+            if (targetPage) {
+                targetPage.classList.add('active');
+            }
+            window.scrollTo(0, 0);
+            
+            // 如果是地图页面，重新渲染地图
+            if (pageId === 'map') renderMap();
+        }
+    };
+
+    // --- Level Manager ---
+    const levelManager = {
+        init: () => {
+            renderMap();
+        },
+
+        startLevel: (idx) => {
+            if (LEVELS[idx].locked) return;
+            state.currentLevelIdx = idx;
+            const subLevels = SUB_LEVELS[LEVELS[idx].id];
+            if (subLevels) {
+                levelManager.switchSubLevel(subLevels[0].id);
+            }
+            router.go('level');
+        },
+
+        switchSubLevel: (subLevelId) => {
+            state.currentSubLevelId = subLevelId;
+            state.quiz = { currentIdx: 0, score: 0, answers: [], completed: false };
+            state.game = { active: false, score: 0, completedCount: 0, timer: 60, combo: 0, timerInterval: null, timelineSlots: [], matchSelection: {left:null, right:null}, bossAnswers: [] };
+            
+            // Render Nav
+            const subLevels = SUB_LEVELS[LEVELS[state.currentLevelIdx].id];
+            const navContainer = document.getElementById('sub-level-nav');
+            navContainer.innerHTML = subLevels.map(sl => `
+                <button class="sub-level-btn ${sl.id === subLevelId ? 'active' : ''}" 
+                        onclick="levelManager.switchSubLevel('${sl.id}')">
+                    ${sl.title}
+                </button>
+            `).join('');
+
+            // Update Header
+            const currentSL = subLevels.find(sl => sl.id === subLevelId);
+            document.getElementById('current-level-title').innerText = currentSL.title;
+            
+            // Toggle Game Tab Visibility
+            const gameBtn = document.getElementById('btn-tab-game');
+            if (currentSL.hasSimulator) {
+                gameBtn.classList.remove('hidden');
+                // Setup Game UI based on type
+                const gData = GAME_DATA[subLevelId];
+                if(gData) {
+                    document.getElementById('game-title').innerText = gData.title;
+                    document.getElementById('game-instruction').innerText = gData.instruction;
+                    document.getElementById('game-start-title').innerText = subLevelId === '1-5' ? "BOSS 挑战" : "准备好了吗？";
+                    document.getElementById('game-start-desc').innerText = gData.desc;
+                    document.getElementById('game-timer').innerText = gData.timeLimit || 60;
+                }
+            } else {
+                gameBtn.classList.add('hidden');
+            }
+
+            // Reset Tab
+            levelManager.switchTab('learn');
+        },
+
+        switchTab: (tabId) => {
+            document.querySelectorAll('.tab-content').forEach(t => t.classList.add('hidden'));
+            document.getElementById(`tab-${tabId}`).classList.remove('hidden');
+            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+            
+            if(tabId === 'learn') {
+                document.querySelectorAll('.nav-btn')[0].classList.add('active');
+                renderKnowledge();
+            }
+            if(tabId === 'quiz') {
+                document.querySelectorAll('.nav-btn')[1].classList.add('active');
+                renderQuiz();
+            }
+            if(tabId === 'game') {
+                document.querySelectorAll('.nav-btn')[2].classList.add('active');
+                document.getElementById('game-start-overlay').classList.remove('hidden');
+                document.querySelectorAll('.game-area').forEach(e => e.classList.add('hidden'));
+                document.getElementById('game-area-timeline').classList.add('hidden');
+                document.getElementById('game-area-match').classList.add('hidden');
+                document.getElementById('game-area-boss').classList.add('hidden');
+            }
+        },
+
+        finishSubLevel: () => {
+            const qData = QUIZ_DB[state.currentSubLevelId] || [];
+            const quizScore = state.quiz.score * 10;
+            let gameScore = state.game.score;
+            
+            // For Boss level, game score is the main score
+            if(state.currentSubLevelId === '1-5') {
+                gameScore = state.game.score * 10; // 15 questions * 10
+            }
+
+            const total = state.currentSubLevelId === '1-5' ? gameScore : (quizScore + gameScore);
+            
+            // Badges
+            const badgesEl = document.getElementById('badges');
+            badgesEl.innerHTML = '';
+            if (total >= 80) badgesEl.innerHTML += `<div style="text-align:center">🏆<br><small>优秀</small></div>`;
+            if (state.currentSubLevelId === '1-5' && total >= 120) badgesEl.innerHTML += `<div style="text-align:center">🎖️<br><small>专家</small></div>`;
+
+            document.getElementById('result-score').innerText = total;
+            document.getElementById('result-msg').innerText = total >= 60 ? "恭喜通关！" : "还需要继续努力哦！";
+            
+            let stars = 0;
+            if (total >= 60) stars = 1;
+            if (total >= 80) stars = 2;
+            if (total >= 90) stars = 3;
+            
+            const starsEl = document.getElementById('result-stars');
+            starsEl.innerHTML = '';
+            for(let i=0; i<3; i++) {
+                starsEl.innerHTML += `<span class="star ${i < stars ? 'active' : 'inactive'}">★</span>`;
+            }
+
+            // Unlock next
+            if (total >= 60) {
+                const subLevels = SUB_LEVELS[1];
+                const currIdx = subLevels.findIndex(s => s.id === state.currentSubLevelId);
+                if (currIdx < subLevels.length - 1) {
+                    document.getElementById('result-msg').innerText += ` 下一关：${subLevels[currIdx+1].title}`;
+                } else {
+                    document.getElementById('result-msg').innerText += " 第1章全部完成！";
+                    LEVELS[0].progress = 100;
+                    LEVELS[0].stars = 3;
+                    LEVELS[1].locked = false;
+                }
+            }
+
+            router.go('result');
+        },
+
+        resetLevel: () => {
+            levelManager.switchSubLevel(state.currentSubLevelId);
+        }
+    };
+
+    // --- Render Functions ---
+    function renderMap() {
+        const grid = document.getElementById('level-grid');
+        grid.innerHTML = '';
+        let unlockedCount = 0;
+        LEVELS.forEach((lvl, idx) => {
+            if (!lvl.locked) unlockedCount++;
+            const card = document.createElement('div');
+            card.className = `level-card ${lvl.locked ? 'locked' : ''}`;
+            card.onclick = () => levelManager.startLevel(idx);
+            let starsHtml = '';
+            for(let i=0; i<3; i++) starsHtml += `<span style="color:${i < lvl.stars ? '#fbbf24' : '#475569'}">★</span>`;
+            card.innerHTML = `
+                <div class="level-header"><span class="level-num">LEVEL ${lvl.id}</span><div>${starsHtml}</div></div>
+                <div class="level-title">${lvl.title}</div>
+                <div class="level-info"><span>${lvl.subtitle}</span></div>
+                <div class="progress-bar-bg"><div class="progress-bar-fill" style="width: ${lvl.progress}%"></div></div>
+                ${lvl.locked ? '<div style="margin-top:10px; font-size:0.8em;">🔒 需完成上一关解锁</div>' : ''}
+            `;
+            grid.appendChild(card);
+        });
+        document.getElementById('levels-unlocked').innerText = `${unlockedCount}/${LEVELS.length}`;
+    }
+
+    function renderKnowledge() {
+        const container = document.getElementById('knowledge-content');
+        const data = KNOWLEDGE_DB[state.currentSubLevelId] || [];
+        container.innerHTML = data.map(item => `
+            <div class="info-card">
+                <div class="info-header" onclick="this.nextElementSibling.classList.toggle('hidden')">
+                    <div class="info-icon">${item.icon}</div>
+                    <div class="info-title">${item.title}</div>
+                    <div style="font-size:0.8em; color:var(--accent-color)">▼</div>
+                </div>
+                <div class="info-details hidden">${item.desc}</div>
+            </div>
+        `).join('');
+        if(container.firstChild) container.firstChild.querySelector('.info-details').classList.remove('hidden');
+    }
+
+    // --- Quiz Engine ---
+    function renderQuiz(isBoss = false) {
+        const qData = QUIZ_DB[state.currentSubLevelId] || [];
+        const qIdx = state.quiz.currentIdx;
+        const area = document.getElementById(isBoss ? 'boss-quiz-area' : 'quiz-area');
+
+        if (!isBoss) {
+            document.getElementById('quiz-progress').innerText = `${qIdx + 1}/${qData.length}`;
+            document.getElementById('quiz-score').innerText = state.quiz.score * 10;
+        }
+
+        if (qIdx >= qData.length) {
+            if(isBoss) {
+                simulator.end(true);
+                return;
+            }
+            state.quiz.completed = true;
+            const currentSL = SUB_LEVELS[1].find(s => s.id === state.currentSubLevelId);
+            area.innerHTML = `
+                <div style="text-align:center; padding:40px;">
+                    <h3>题目挑战完成！</h3>
+                    <p style="margin:20px 0;">你答对了 ${state.quiz.score} / ${qData.length} 题</p>
+                    ${currentSL.hasSimulator ? 
+                        `<button class="action-btn" onclick="levelManager.switchTab('game')">进入模拟实战 →</button>` : 
+                        `<button class="action-btn" onclick="levelManager.finishSubLevel()">查看成绩 →</button>`
+                    }
+                </div>
+            `;
+            return;
+        }
+
+        const q = qData[qIdx];
+        let inputHtml = '';
+
+        if (q.type === 'sc') {
+            inputHtml = `<div class="options-grid">
+                ${q.options.map((opt, i) => `
+                    <div class="option-btn" onclick="handleQuizAnswer(${i}, this, ${isBoss})">
+                        <span>${["A", "B", "C", "D"][i]}. ${opt}</span>
+                    </div>
+                `).join('')}
+            </div>`;
+        } else if (q.type === 'tf') {
+            inputHtml = `<div class="tf-container">
+                <div class="tf-btn" onclick="handleTFAnswer(true, this, ${isBoss})">正确</div>
+                <div class="tf-btn" onclick="handleTFAnswer(false, this, ${isBoss})">错误</div>
+            </div>`;
+        } else if (q.type === 'mc') {
+            inputHtml = `<div class="options-grid">
+                ${q.options.map((opt, i) => `
+                    <div class="option-btn" id="mc-opt-${i}" onclick="toggleMCSelection(${i})">
+                        <span>${opt}</span>
+                    </div>
+                `).join('')}
+            </div>
+            <div style="margin-top:20px; text-align:center;">
+                <button class="action-btn" onclick="submitMCAnswer(${isBoss})">提交答案</button>
+            </div>`;
+        } else if (q.type === 'case') {
+            inputHtml = `<div class="case-content"><strong>案例：</strong>${q.q}</div>
+            <div class="question-text">${q.subQ}</div>
+            <div class="options-grid">
+                ${q.options.map((opt, i) => `
+                    <div class="option-btn" onclick="handleQuizAnswer(${i}, this, ${isBoss})">
+                        <span>${opt}</span>
+                    </div>
+                `).join('')}
+            </div>`;
+        }
+
+        area.innerHTML = `
+            <div class="question-card">
+                <div class="question-text">${qIdx + 1}. ${q.type !== 'case' ? q.q : ''}</div>
+                ${inputHtml}
+                <div class="explanation" id="${isBoss ? 'boss-explanation' : 'explanation'}">
+                    <strong>解析：</strong> ${q.explanation}
+                    <div style="margin-top:15px; text-align:right;">
+                        <button class="action-btn" style="padding:5px 15px; font-size:0.9em;" onclick="nextQuestion(${isBoss})">下一题</button>
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+
+    window.handleQuizAnswer = (selectedIndex, btnElement, isBoss) => {
+        const expId = isBoss ? 'boss-explanation' : 'explanation';
+        if (document.getElementById(expId).classList.contains('show')) return;
+        
+        const q = QUIZ_DB[state.currentSubLevelId][state.quiz.currentIdx];
+        const isCorrect = selectedIndex === q.answer;
+        
+        if (isCorrect) {
+            btnElement.classList.add('correct');
+            if(isBoss) state.game.score++; else state.quiz.score++;
+        } else {
+            btnElement.classList.add('wrong');
+            const siblings = btnElement.parentElement.children;
+            if(siblings[q.answer]) siblings[q.answer].classList.add('correct');
+        }
+        document.getElementById(expId).classList.add('show');
+    };
+
+    window.handleTFAnswer = (boolVal, btnElement, isBoss) => {
+        const expId = isBoss ? 'boss-explanation' : 'explanation';
+        if (document.getElementById(expId).classList.contains('show')) return;
+        const q = QUIZ_DB[state.currentSubLevelId][state.quiz.currentIdx];
+        const isCorrect = boolVal === q.answer;
+        
+        if(isCorrect) {
+            btnElement.classList.add(boolVal ? 'active-true' : 'active-false');
+            if(isBoss) state.game.score++; else state.quiz.score++;
+        } else {
+            btnElement.style.opacity = '0.5';
+            const siblings = btnElement.parentElement.children;
+            const correctBtn = boolVal ? siblings[1] : siblings[0];
+            correctBtn.classList.add(!boolVal ? 'active-true' : 'active-false');
+        }
+        document.getElementById(expId).classList.add('show');
+    };
+
+    let mcSelection = [];
+    window.toggleMCSelection = (idx) => {
+        const btn = document.getElementById(`mc-opt-${idx}`);
+        if(mcSelection.includes(idx)) {
+            mcSelection = mcSelection.filter(i => i !== idx);
+            btn.classList.remove('selected');
+        } else {
+            mcSelection.push(idx);
+            btn.classList.add('selected');
+        }
+    };
+
+    window.submitMCAnswer = (isBoss) => {
+        const expId = isBoss ? 'boss-explanation' : 'explanation';
+        if (document.getElementById(expId).classList.contains('show')) return;
+        const q = QUIZ_DB[state.currentSubLevelId][state.quiz.currentIdx];
+        const correct = q.answer.sort().toString() === mcSelection.sort().toString();
+        
+        mcSelection.forEach(idx => {
+            const btn = document.getElementById(`mc-opt-${idx}`);
+            if(q.answer.includes(idx)) btn.classList.add('correct');
+            else btn.classList.add('wrong');
+        });
+        q.answer.forEach(idx => {
+             const btn = document.getElementById(`mc-opt-${idx}`);
+             if(!mcSelection.includes(idx)) btn.classList.add('correct');
+        });
+
+        if(correct) {
+            if(isBoss) state.game.score++; else state.quiz.score++;
+        }
+        mcSelection = [];
+        document.getElementById(expId).classList.add('show');
+    };
+
+    window.nextQuestion = (isBoss) => {
+        state.quiz.currentIdx++;
+        renderQuiz(isBoss);
+    };
+
+    // --- Simulator Engine ---
+    const simulator = {
+        start: () => {
+            document.getElementById('game-start-overlay').classList.add('hidden');
+            const subLevel = SUB_LEVELS[1].find(s => s.id === state.currentSubLevelId);
+            const type = subLevel.gameType;
+
+            state.game.active = true;
+            state.game.score = 0;
+            state.game.timer = GAME_DATA[state.currentSubLevelId]?.timeLimit || 60;
+            
+            clearInterval(state.game.timerInterval);
+            state.game.timerInterval = setInterval(() => {
+                state.game.timer--;
+                document.getElementById('game-timer').innerText = state.game.timer;
+                if(state.game.timer <= 0) simulator.end(false);
+            }, 1000);
+
+            if(type === 'drag') simulator.startDragGame();
+            if(type === 'timeline') simulator.startTimelineGame();
+            if(type === 'match') simulator.startMatchGame();
+            if(type === 'boss') simulator.startBossGame();
+        },
+
+        // Type 1: Drag (1-1)
+        startDragGame: () => {
+            document.getElementById('game-area-drag').classList.remove('hidden');
+            const data = GAME_DATA['1-1'];
+            
+            // Render Zones
+            const zones = document.getElementById('game-zones');
+            zones.innerHTML = data.zones.map(z => `
+                <div class="drop-zone" id="zone-${z.id}" 
+                     ondragover="simulator.allowDrop(event)" 
+                     ondrop="simulator.drop(event, '${z.id}')">
+                    <div class="zone-icon">${z.icon}</div>
+                    <div class="zone-label">${z.label}</div>
+                </div>
+            `).join('');
+
+            // Fill Pool
+            const pool = document.getElementById('game-pool');
+            pool.innerHTML = '';
+            const deck = [...data.items].sort(() => 0.5 - Math.random());
+            document.getElementById('game-remaining').innerText = deck.length;
+            
+            deck.forEach(item => {
+                const card = document.createElement('div');
+                card.className = 'game-card';
+                card.draggable = true;
+                card.id = `card-${item.id}`;
+                card.dataset.type = item.type;
+                card.innerHTML = `<strong>${item.name}</strong><br>${item.desc}`;
+                card.ondragstart = (e) => {
+                    e.dataTransfer.setData("text", item.id);
+                    e.target.classList.add('dragging');
+                };
+                card.ondragend = (e) => e.target.classList.remove('dragging');
+                pool.appendChild(card);
+            });
+        },
+
+        allowDrop: (e) => { e.preventDefault(); e.currentTarget.classList.add('drag-over'); },
+
+        drop: (e, zoneId) => {
+            e.preventDefault();
+            const zoneEl = document.getElementById(`zone-${zoneId}`);
+            zoneEl.classList.remove('drag-over');
+            const cardId = e.dataTransfer.getData("text");
+            const cardEl = document.getElementById(`card-${cardId}`);
+            if(!cardEl) return;
+
+            if (cardEl.dataset.type === zoneId) {
+                state.game.combo++;
+                state.game.score += (10 + (state.game.combo > 1 ? state.game.combo * 2 : 0));
+                zoneEl.classList.add('correct-flash');
+                setTimeout(() => zoneEl.classList.remove('correct-flash'), 500);
+                cardEl.remove();
+                
+                const remaining = document.getElementById('game-pool').children.length;
+                document.getElementById('game-remaining').innerText = remaining;
+                if(remaining === 0) simulator.end(true);
+            } else {
+                state.game.combo = 0;
+                state.game.score = Math.max(0, state.game.score - 5);
+                zoneEl.classList.add('wrong-flash');
+                setTimeout(() => zoneEl.classList.remove('wrong-flash'), 500);
+            }
+            document.getElementById('game-score').innerText = state.game.score;
+        },
+
+        // Type 2: Timeline (1-3)
+        startTimelineGame: () => {
+            document.getElementById('game-area-timeline').classList.remove('hidden');
+            const data = GAME_DATA['1-3'];
+            state.game.timelineSlots = new Array(6).fill(null);
+
+            // Render Slots
+            const slotsContainer = document.getElementById('timeline-slots');
+            slotsContainer.innerHTML = '';
+            for(let i=0; i<6; i++) {
+                const slot = document.createElement('div');
+                slot.className = 'timeline-slot';
+                slot.dataset.index = i;
+                slot.innerHTML = `<span class="timeline-index">${i+1}</span><div class="slot-content" style="flex:1"></div>`;
+                slot.ondragover = (e) => e.preventDefault();
+                slot.ondrop = (e) => simulator.dropTimeline(e, i);
+                slotsContainer.appendChild(slot);
+            }
+
+            // Render Items
+            const pool = document.getElementById('timeline-pool');
+            pool.innerHTML = '';
+            const items = [...data.items].sort(() => 0.5 - Math.random());
+            items.forEach(item => {
+                const el = document.createElement('div');
+                el.className = 'timeline-item';
+                el.draggable = true;
+                el.id = `tl-item-${item.id}`;
+                el.innerText = item.label;
+                el.dataset.id = item.id;
+                el.ondragstart = (e) => e.dataTransfer.setData("text", item.id);
+                pool.appendChild(el);
+            });
+        },
+
+        dropTimeline: (e, index) => {
+            e.preventDefault();
+            const itemId = e.dataTransfer.getData("text");
+            const itemEl = document.getElementById(`tl-item-${itemId}`);
+            if(!itemEl) return;
+
+            // Remove from old slot if exists
+            if(itemEl.parentElement.classList.contains('slot-content')) {
+                const oldIdx = itemEl.parentElement.parentElement.dataset.index;
+                state.game.timelineSlots[oldIdx] = null;
+            }
+
+            // Place in new slot
+            const slotContent = e.currentTarget.querySelector('.slot-content');
+            if(slotContent.children.length > 0) {
+                document.getElementById('timeline-pool').appendChild(slotContent.children[0]);
+            }
+            slotContent.appendChild(itemEl);
+            state.game.timelineSlots[index] = itemId;
+        },
+
+        checkTimeline: () => {
+            const correctOrder = GAME_DATA['1-3'].correctOrder;
+            let correctCount = 0;
+            state.game.timelineSlots.forEach((id, idx) => {
+                const slot = document.querySelectorAll('.timeline-slot')[idx];
+                if(id === correctOrder[idx]) {
+                    slot.style.borderColor = 'var(--success-color)';
+                    correctCount++;
+                } else {
+                    slot.style.borderColor = 'var(--error-color)';
+                }
+            });
+
+            if(correctCount === 6) {
+                state.game.score = 100;
+                simulator.end(true);
+            } else {
+                alert(`只有 ${correctCount} 个正确，请调整后重试！`);
+            }
+        },
+
+        // Type 3: Match (1-4)
+        startMatchGame: () => {
+            document.getElementById('game-area-match').classList.remove('hidden');
+            const data = GAME_DATA['1-4'];
+            const leftCol = document.getElementById('match-left');
+            const rightCol = document.getElementById('match-right');
+            
+            leftCol.innerHTML = '';
+            rightCol.innerHTML = '';
+
+            // Shuffle
+            const pairs = data.pairs;
+            const lefts = pairs.map(p => p.left).sort(() => 0.5 - Math.random());
+            const rights = pairs.map(p => p.right).sort(() => 0.5 - Math.random());
+
+            lefts.forEach(txt => {
+                const btn = document.createElement('div');
+                btn.className = 'match-btn';
+                btn.innerText = txt;
+                btn.onclick = () => simulator.selectMatch('left', txt, btn);
+                leftCol.appendChild(btn);
+            });
+
+            rights.forEach(txt => {
+                const btn = document.createElement('div');
+                btn.className = 'match-btn';
+                btn.innerText = txt;
+                btn.onclick = () => simulator.selectMatch('right', txt, btn);
+                rightCol.appendChild(btn);
+            });
+        },
+
+        selectMatch: (side, value, el) => {
+            if(el.classList.contains('matched')) return;
+            
+            // Clear previous selection on same side
+            if(state.game.matchSelection[side]) {
+                state.game.matchSelection[side].el.classList.remove('selected');
+            }
+
+            state.game.matchSelection[side] = { value, el };
+            el.classList.add('selected');
+
+            // Check match
+            if(state.game.matchSelection.left && state.game.matchSelection.right) {
+                simulator.checkMatch();
+            }
+        },
+
+        checkMatch: () => {
+            const left = state.game.matchSelection.left;
+            const right = state.game.matchSelection.right;
+            const pair = GAME_DATA['1-4'].pairs.find(p => p.left === left.value);
+            
+            if(pair && pair.right === right.value) {
+                // Correct
+                left.el.classList.add('matched');
+                right.el.classList.add('matched');
+                left.el.classList.remove('selected');
+                right.el.classList.remove('selected');
+                state.game.score += 20;
+                state.game.completedCount++;
+                
+                if(state.game.completedCount === 5) simulator.end(true);
+            } else {
+                // Wrong
+                left.el.classList.add('wrong');
+                right.el.classList.add('wrong');
+                setTimeout(() => {
+                    left.el.classList.remove('wrong', 'selected');
+                    right.el.classList.remove('wrong', 'selected');
+                }, 500);
+            }
+            state.game.matchSelection = { left: null, right: null };
+            document.getElementById('game-score').innerText = state.game.score;
+        },
+
+        // Type 4: Boss (1-5)
+        startBossGame: () => {
+            document.getElementById('game-area-boss').classList.remove('hidden');
+            state.quiz.currentIdx = 0;
+            state.quiz.score = 0; // used to count correct answers
+            renderQuiz(true);
+        },
+
+        end: (success) => {
+            clearInterval(state.game.timerInterval);
+            state.game.active = false;
+            
+            if (success) {
+                // For Boss level, check if pass requirement met
+                if (state.currentSubLevelId === '1-5') {
+                    if (state.game.score >= 12) { // 12/15
+                        alert(`挑战成功！答对 ${state.game.score}/15 题`);
+                        levelManager.finishSubLevel();
+                    } else {
+                        alert(`挑战失败！仅答对 ${state.game.score} 题，需要 12 题。`);
+                        levelManager.switchTab('game');
+                    }
+                } else {
+                    alert(`挑战成功！得分：${state.game.score}`);
+                    levelManager.finishSubLevel();
+                }
+            } else {
+                alert("时间到！挑战失败，请重试。");
+                levelManager.switchTab('game');
+            }
+        }
+    };
+
+    // --- Init ---
+    levelManager.init();
+
+</script>
+</body>
+</html>

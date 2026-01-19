@@ -1,0 +1,521 @@
+[
+  {
+    "id": 1,
+    "name": "市场准入篇",
+    "description": "掌握市场注册流程与经营主体分类",
+    "estimatedTime": "30分钟",
+    "difficulty": 1,
+    "sections": [
+      {
+        "id": 1,
+        "name": "经营主体类型识别",
+        "learningObjectives": [
+          "准确区分发电企业、售电公司、电力用户、新型经营主体",
+          "理解各类主体的定义与特征"
+        ],
+        "questions": [
+          "L1-1-SC-001",
+          "L1-1-SC-002",
+          "L1-1-MC-003",
+          "L1-1-TF-004",
+          "L1-1-SC-005",
+          "L1-1-MC-006"
+        ],
+        "simulator": "1-1 市场角色认知闯关"
+      },
+      {
+        "id": 2,
+        "name": "注册条件判断",
+        "learningObjectives": [
+          "掌握各类经营主体的具体准入条件",
+          "判断企业是否满足市场注册要求"
+        ],
+        "questions": [
+          "L1-2-SC-007",
+          "L1-2-TF-008",
+          "L1-2-SC-009",
+          "L1-2-MC-010",
+          "L1-2-CA-011"
+        ],
+        "simulator": "1-2 注册资格自测系统"
+      },
+      {
+        "id": 3,
+        "name": "注册流程实操",
+        "learningObjectives": [
+          "熟悉市场注册的完整流程",
+          "掌握申请、承诺、审查、公示、生效各环节要求"
+        ],
+        "questions": [
+          "L1-3-SC-012",
+          "L1-3-TF-013",
+          "L1-3-MC-014",
+          "L1-3-CS-015",
+          "L1-3-SC-016",
+          "L1-3-TF-017",
+          "L1-3-CA-018",
+          "L1-3-MC-019",
+          "L1-3-CS-020"
+        ],
+        "simulator": "1-3 注册流程闯关器"
+      },
+      {
+        "id": 4,
+        "name": "信息变更与注销",
+        "learningObjectives": [
+          "了解信息变更的触发条件与流程",
+          "掌握市场注销的正当理由与程序"
+        ],
+        "questions": [],
+        "simulator": "1-4 信息变更与注销模拟"
+      }
+    ],
+    "simulatorCount": 2,
+    "questionCount": 20
+  },
+  {
+    "id": 2,
+    "name": "中长期交易基础篇",
+    "description": "理解交易品种、市场成员权责、合同要素",
+    "estimatedTime": "40分钟",
+    "difficulty": 2,
+    "sections": [
+      {
+        "id": 1,
+        "name": "交易品种与周期",
+        "learningObjectives": [
+          "区分电能量交易、合同交易、绿色电力交易",
+          "理解年度、月度、\"D-2\"日等交易周期"
+        ],
+        "questions": [
+          "L2-1-SC-021",
+          "L2-1-SC-022",
+          "L2-1-MC-023",
+          "L2-1-TF-024",
+          "L2-1-SC-025",
+          "L2-1-MC-026"
+        ],
+        "simulator": "2-2 交易周期时间轴"
+      },
+      {
+        "id": 2,
+        "name": "市场成员权利义务",
+        "learningObjectives": [
+          "理解发电企业、用户、售电公司、电网企业、交易机构的权利义务",
+          "掌握各主体在交易中的职责边界"
+        ],
+        "questions": [
+          "L2-2-SC-027",
+          "L2-2-SC-028",
+          "L2-2-MC-029",
+          "L2-2-TF-030",
+          "L2-2-CA-031",
+          "L2-2-SC-032"
+        ],
+        "simulator": "2-3 角色权责匹配游戏"
+      },
+      {
+        "id": 3,
+        "name": "交易单元理解",
+        "learningObjectives": [
+          "理解交易单元与经营主体的关系",
+          "掌握不同交易类型的购方单元和售方单元"
+        ],
+        "questions": [
+          "L2-3-SC-033",
+          "L2-3-TF-034",
+          "L2-3-MC-035",
+          "L2-3-SC-036",
+          "L2-3-CS-037"
+        ],
+        "simulator": "2-4 交易单元配对游戏"
+      },
+      {
+        "id": 4,
+        "name": "合同要素掌握",
+        "learningObjectives": [
+          "掌握中长期交易合同的关键要素",
+          "理解结算参考点、曲线形成方式、交易最小单位"
+        ],
+        "questions": [
+          "L2-4-SC-038",
+          "L2-4-TF-039",
+          "L2-4-MC-040",
+          "L2-4-SC-041",
+          "L2-4-CA-042",
+          "L2-4-MC-043",
+          "L2-4-CS-044",
+          "L2-4-TF-045",
+          "L2-4-SC-046",
+          "L2-4-MC-047",
+          "L2-4-CS-048"
+        ],
+        "simulator": "2-5 合同要素拼图游戏"
+      }
+    ],
+    "simulatorCount": 1,
+    "questionCount": 28
+  },
+  {
+    "id": 3,
+    "name": "交易方式篇",
+    "description": "精通6种交易方式的规则与操作",
+    "estimatedTime": "90分钟",
+    "difficulty": 3,
+    "sections": [
+      {
+        "id": 1,
+        "name": "双边协商交易",
+        "learningObjectives": [
+          "理解双边协商的交易流程",
+          "掌握要约与承诺机制"
+        ],
+        "questions": [
+          "L3-1-SC-049",
+          "L3-1-TF-050",
+          "L3-1-MC-051",
+          "L3-1-SC-052",
+          "L3-1-CA-053",
+          "L3-1-CS-054",
+          "L3-1-MC-055"
+        ],
+        "simulator": "3-1 双边协商谈判模拟器"
+      },
+      {
+        "id": 2,
+        "name": "集中竞价（边际电价法）",
+        "learningObjectives": [
+          "掌握边际电价法的出清原理",
+          "理解供需曲线的形成与交点计算",
+          "熟练运用边际电价法公式"
+        ],
+        "questions": [
+          "L3-2-SC-056",
+          "L3-2-TF-057",
+          "L3-2-CA-058",
+          "L3-2-SC-059",
+          "L3-2-MC-060",
+          "L3-2-CS-061"
+        ],
+        "simulator": "3-2 供需曲线可视化模拟器"
+      },
+      {
+        "id": 3,
+        "name": "集中竞价（报价撮合法）",
+        "learningObjectives": [
+          "掌握报价撮合法的配对规则",
+          "理解价差对系数k的作用"
+        ],
+        "questions": [
+          "L3-3-SC-062",
+          "L3-3-CA-063",
+          "L3-3-SC-064",
+          "L3-3-MC-065",
+          "L3-3-CA-066",
+          "L3-3-CS-067"
+        ],
+        "simulator": "3-3 报价撮合出清模拟器"
+      },
+      {
+        "id": 4,
+        "name": "挂牌交易",
+        "learningObjectives": [
+          "区分单向挂牌和双向挂牌",
+          "掌握挂牌交易的操作流程"
+        ],
+        "questions": [
+          "L3-4-SC-068",
+          "L3-4-TF-069",
+          "L3-4-MC-070",
+          "L3-4-SC-071",
+          "L3-4-CA-072",
+          "L3-4-CS-073"
+        ],
+        "simulator": "3-4 电力拍卖行模拟器"
+      },
+      {
+        "id": 5,
+        "name": "集中撮合交易",
+        "learningObjectives": [
+          "理解集中撮合的\"价格优先\"原则",
+          "掌握15分钟申报区间的出清机制"
+        ],
+        "questions": [
+          "L3-5-SC-074",
+          "L3-5-TF-075",
+          "L3-5-MC-076",
+          "L3-5-CA-077",
+          "L3-5-CS-078"
+        ],
+        "simulator": "3-5 集中撮合交易大厅"
+      },
+      {
+        "id": 6,
+        "name": "滚动撮合交易",
+        "learningObjectives": [
+          "掌握\"时间优先、价格优先\"的实时撮合原则",
+          "培养快速决策能力"
+        ],
+        "questions": [
+          "L3-6-SC-079",
+          "L3-6-SC-080",
+          "L3-6-TF-081",
+          "L3-6-MC-082",
+          "L3-6-CA-083",
+          "L3-6-SC-084",
+          "L3-6-CS-085",
+          "L3-6-MC-086"
+        ],
+        "simulator": "3-6 滚动撮合交易模拟器"
+      }
+    ],
+    "simulatorCount": 6,
+    "questionCount": 38
+  },
+  {
+    "id": 4,
+    "name": "价格与电量约束篇",
+    "description": "掌握时段划分、价格限制、电量计算",
+    "estimatedTime": "50分钟",
+    "difficulty": 3,
+    "sections": [
+      {
+        "id": 1,
+        "name": "时段划分原则",
+        "learningObjectives": [
+          "理解48时段的划分方式（每天24小时×2）",
+          "掌握峰、谷、平、尖峰、深谷时段的分类"
+        ],
+        "questions": [
+          "L4-1-SC-087",
+          "L4-1-SC-088",
+          "L4-1-MC-089",
+          "L4-1-TF-090",
+          "L4-1-CA-091"
+        ],
+        "simulator": "4-1 时段识别游戏"
+      },
+      {
+        "id": 2,
+        "name": "价格上下限约束",
+        "learningObjectives": [
+          "掌握不同交易类型的价格限制",
+          "理解价格上下限的调整机制"
+        ],
+        "questions": [
+          "L4-2-SC-092",
+          "L4-2-TF-093",
+          "L4-2-MC-094",
+          "L4-2-SC-095",
+          "L4-2-CA-096"
+        ],
+        "simulator": "4-2 价格约束计算器"
+      },
+      {
+        "id": 3,
+        "name": "年度电量约束计算",
+        "learningObjectives": [
+          "掌握燃煤发电企业年度交易净合同量上限公式",
+          "理解新能源发电企业电量约束的计算方法"
+        ],
+        "questions": [
+          "L4-3-SC-097",
+          "L4-3-CA-098",
+          "L4-3-SC-099",
+          "L4-3-MC-100",
+          "L4-3-CS-101",
+          "L4-3-TF-102",
+          "L4-3-CA-103"
+        ],
+        "simulator": "4-3 年度电量约束计算器"
+      },
+      {
+        "id": 4,
+        "name": "月度电量约束计算",
+        "learningObjectives": [
+          "掌握月度可交易电量的计算方法",
+          "理解已签合同对可交易电量的影响"
+        ],
+        "questions": [],
+        "simulator": "4-4 月度电量约束计算器"
+      }
+    ],
+    "simulatorCount": 3,
+    "questionCount": 17
+  },
+  {
+    "id": 5,
+    "name": "绿色电力交易篇",
+    "description": "了解绿电交易机制与绿证管理",
+    "estimatedTime": "35分钟",
+    "difficulty": 2,
+    "sections": [
+      {
+        "id": 1,
+        "name": "绿电交易特点",
+        "learningObjectives": [
+          "理解绿电交易与普通电能量交易的区别",
+          "掌握绿电交易的标的物构成"
+        ],
+        "questions": [
+          "L5-1-SC-104",
+          "L5-1-TF-105",
+          "L5-1-MC-106",
+          "L5-1-SC-107",
+          "L5-1-CA-108"
+        ],
+        "simulator": "5-1 绿电交易特点对比"
+      },
+      {
+        "id": 2,
+        "name": "绿电交易流程",
+        "learningObjectives": [
+          "掌握绿电交易的完整流程",
+          "理解绿电交易的申报与结算"
+        ],
+        "questions": [
+          "L5-2-SC-109",
+          "L5-2-CA-110",
+          "L5-2-MC-111",
+          "L5-2-CS-112"
+        ],
+        "simulator": "5-2 绿电交易流程模拟器"
+      },
+      {
+        "id": 3,
+        "name": "绿证核发与认领",
+        "learningObjectives": [
+          "了解绿证的作用与管理",
+          "掌握绿证核发与认领流程"
+        ],
+        "questions": [
+          "L5-3-SC-113",
+          "L5-3-TF-114",
+          "L5-3-MC-115",
+          "L5-3-CA-116",
+          "L5-3-CS-117"
+        ],
+        "simulator": "5-3 绿证管理模拟器"
+      }
+    ],
+    "simulatorCount": 1,
+    "questionCount": 14
+  },
+  {
+    "id": 6,
+    "name": "结算与偏差处理篇",
+    "description": "熟悉电费结算流程与偏差处理规则",
+    "estimatedTime": "45分钟",
+    "difficulty": 3,
+    "sections": [
+      {
+        "id": 1,
+        "name": "电费结算流程",
+        "learningObjectives": [
+          "理解电费结算的完整流程",
+          "掌握结算周期与结算主体"
+        ],
+        "questions": [
+          "L6-1-SC-118",
+          "L6-1-SC-119",
+          "L6-1-MC-120",
+          "L6-1-TF-121",
+          "L6-1-CA-122"
+        ],
+        "simulator": "6-1 结算流程模拟器"
+      },
+      {
+        "id": 2,
+        "name": "偏差电量处理",
+        "learningObjectives": [
+          "理解偏差电量的定义与产生原因",
+          "掌握偏差电量的处理规则"
+        ],
+        "questions": [
+          "L6-2-SC-123",
+          "L6-2-CA-124",
+          "L6-2-SC-125",
+          "L6-2-MC-126",
+          "L6-2-CS-127"
+        ],
+        "simulator": "6-2 偏差电费计算器"
+      },
+      {
+        "id": 3,
+        "name": "费用分摊计算",
+        "learningObjectives": [
+          "理解输配电费、系统运行费等的分摊方式",
+          "掌握政府性基金及附加的计算"
+        ],
+        "questions": [
+          "L6-3-SC-128",
+          "L6-3-MC-129",
+          "L6-3-CA-130",
+          "L6-3-CS-131"
+        ],
+        "simulator": "6-3 费用分摊计算器"
+      }
+    ],
+    "simulatorCount": 2,
+    "questionCount": 14
+  },
+  {
+    "id": 7,
+    "name": "综合实战篇",
+    "description": "综合应用所学知识完成复杂交易场景",
+    "estimatedTime": "120分钟",
+    "difficulty": 4,
+    "sections": [
+      {
+        "id": 1,
+        "name": "发电企业经营模拟",
+        "learningObjectives": [
+          "综合运用年度、月度、日前交易策略",
+          "体验发电企业全流程经营决策"
+        ],
+        "questions": [
+          "L7-1-CS-132",
+          "L7-1-MC-133"
+        ],
+        "simulator": "7-1 发电企业经营模拟器"
+      },
+      {
+        "id": 2,
+        "name": "售电公司套利实战",
+        "learningObjectives": [
+          "掌握售电公司的买卖价差套利策略",
+          "理解批发市场与零售市场的联动"
+        ],
+        "questions": [
+          "L7-2-CS-134",
+          "L7-2-MC-135",
+          "L7-2-CA-136",
+          "L7-2-CS-137"
+        ],
+        "simulator": "7-2 售电公司套利模拟器"
+      },
+      {
+        "id": 3,
+        "name": "用户购电优化",
+        "learningObjectives": [
+          "掌握不同用户的购电策略",
+          "理解峰谷电价的套利机会"
+        ],
+        "questions": [],
+        "simulator": "7-3 用户购电优化模拟器"
+      },
+      {
+        "id": 4,
+        "name": "综合交易决策",
+        "learningObjectives": [
+          "综合应用所有交易规则",
+          "培养复杂场景下的决策能力"
+        ],
+        "questions": [],
+        "simulator": "7-4 综合交易决策模拟器"
+      }
+    ],
+    "simulatorCount": 4,
+    "questionCount": 6
+  }
+]
